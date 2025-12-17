@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - Client Management System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1><i class="fas fa-search"></i> Search Results</h1>
+        <p class="text-muted">Results for: "<strong>{{ query }}</strong>"</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to All Clients
+        </a>
+    </div>
+</div>
+
+{% if clients %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Company</th>
+                <th>City</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+            <tr>
+                <td>#{{ client.id }}</td>
+                <td><strong>{{ client.name }}</strong></td>
+                <td><a href="mailto:{{ client.email }}">{{ client.email }}</a></td>
+                <td><a href="tel:{{ client.phone }}">{{ client.phone }}</a></td>
+                <td>{{ client.company or 'N/A' }}</td>
+                <td>{{ client.city or 'N/A' }}</td>
+                <td>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <a href="{{ url_for('view_client', id=client.id) }}" class="btn btn-info" title="View">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ url_for('edit_client', id=client.id) }}" class="btn btn-warning" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form method="POST" action="{{ url_for('delete_client', id=client.id) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this client?');">
+                            <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="text-muted">Found {{ clients|length }} result(s)</p>
+
+{% else %}
+<div class="alert alert-warning" role="alert">
+    <i class="fas fa-exclamation-triangle"></i> No clients found matching "<strong>{{ query }}</strong>". 
+    <a href="{{ url_for('index') }}" class="alert-link">View all clients</a>
+</div>
+{% endif %}
+{% endblock %}
